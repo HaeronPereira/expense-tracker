@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Expenses | Expense Tracker</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+
+<div class="sidebar">
+
+    <div>
+
+        <h2>💰 Expense Tracker</h2>
+
+        <nav>
+
+            <a href="{{ url_for('home') }}">
+                Dashboard
+            </a>
+
+            <a
+                class="active"
+                href="{{ url_for('expenses') }}"
+            >
+                Expenses
+            </a>
+
+            <a href="{{ url_for('bills') }}">Bills</a>
+
+            <a href="{{ url_for('categories') }}">
+                Categories
+            </a>
+
+            <a href="{{ url_for('reports') }}">Reports</a>
+
+        </nav>
+
+    </div>
+
+    <div class="sidebar-footer">
+        Personal Finance
+    </div>
+
+</div>
+
+
+<main class="main-content">
+
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>Expenses</h1>
+
+            <p>
+                View and manage your spending.
+            </p>
+
+        </div>
+
+
+        <div class="topbar-actions">
+
+            <a
+                href="{{ url_for(
+                    'export_expenses',
+                    search=search,
+                    category=selected_category,
+                    month=selected_month
+                ) }}"
+                class="export-button"
+            >
+                Export CSV
+            </a>
+
+            <a
+                href="{{ url_for('add_expense') }}"
+                class="add-button"
+            >
+                + Add Expense
+            </a>
+
+        </div>
+
+    </div>
+
+    <section class="panel expense-filter-panel">
+
+        <form
+            method="GET"
+            action="{{ url_for('expenses') }}"
+            class="expense-filter-form"
+        >
+
+            <div class="filter-field">
+
+                <label for="search">
+                    Search
+                </label>
+
+                <input
+                    id="search"
+                    name="search"
+                    type="text"
+                    value="{{ search }}"
+                    placeholder="Search description"
+                >
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label for="category">
+                    Category
+                </label>
+
+                <select
+                    id="category"
+                    name="category"
+                >
+
+                    <option value="">
+                        All Categories
+                    </option>
+
+                    {% for category in categories %}
+
+                    <option
+                        value="{{ category['id'] }}"
+                        {% if selected_category == category['id']|string %}
+                        selected
+                        {% endif %}
+                    >
+                        {{ category['name'] }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label for="month">
+                    Month
+                </label>
+
+                <input
+                    id="month"
+                    name="month"
+                    type="month"
+                    value="{{ selected_month }}"
+                >
+
+            </div>
+
+
+            <div class="filter-actions">
+
+                <button
+                    type="submit"
+                    class="add-button"
+                >
+                    Apply Filters
+                </button>
+
+                <a
+                    href="{{ url_for('expenses') }}"
+                    class="clear-filter-button"
+                >
+                    Clear
+                </a>
+
+            </div>
+
+        </form>
+
+    </section>
+
+
+    <section class="panel">
+
+
+        {% if expenses %}
+
+
+        <div class="expense-summary">
+
+            <p>Total Expenses</p>
+
+            <h2>
+                £{{ "%.2f"|format(total) }}
+            </h2>
+
+        </div>
+
+
+        <div class="expense-table-container">
+
+            <table class="expense-table">
+
+
+                <thead>
+
+                    <tr>
+
+                        <th>Date</th>
+
+                        <th>Description</th>
+
+                        <th>Category</th>
+
+                        <th>Payment Method</th>
+
+                        <th>Amount</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for expense in expenses %}
+
+
+                    <tr>
+
+                        <td>
+                            {{ expense["expense_date"] }}
+                        </td>
+
+                        <td>
+                            {{ expense["description"] }}
+                        </td>
+
+                        <td>
+                            {{ expense["category_name"] }}
+                        </td>
+
+                        <td>
+                            {{ expense["payment_method"] }}
+                        </td>
+
+                        <td class="expense-amount">
+
+                            £{{ "%.2f"|format(expense["amount"]) }}
+
+                        </td>
+
+                        <td>
+
+                            <div class="action-buttons">
+
+                                <a
+                                    href="{{ url_for('edit_expense', expense_id=expense['id']) }}"
+                                    class="edit-button"
+                                >
+                                    Edit
+                                </a>
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('delete_expense', expense_id=expense['id']) }}"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="delete-button"
+                                        onclick="return confirm('Are you sure you want to delete this expense?');"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <div class="empty-state">
+
+            <div class="empty-icon">
+                £
+            </div>
+
+            <h3>No expenses yet</h3>
+
+            <p>
+                Add your first expense to start tracking
+                your spending.
+            </p>
+
+            <a
+                href="{{ url_for('add_expense') }}"
+                class="add-button"
+            >
+                + Add Expense
+            </a>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+</main>
+
+
+</body>
+
+</html>

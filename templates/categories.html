@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Categories | Expense Tracker</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+<div class="sidebar">
+
+    <div>
+
+        <h2>💰 Expense Tracker</h2>
+
+        <nav>
+
+            <a href="/">Dashboard</a>
+
+            <a href="{{ url_for('expenses') }}">Expenses</a>
+
+            <a href="{{ url_for('bills') }}">Bills</a>
+
+            <a class="active"
+               href="/categories">
+                Categories
+            </a>
+
+            <a href="{{ url_for('reports') }}">Reports</a>
+
+        </nav>
+
+    </div>
+
+    <div class="sidebar-footer">
+        Personal Finance
+    </div>
+
+</div>
+
+
+<main class="main-content">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-message-container">
+
+                {% for message_type, message in messages %}
+
+                    <div class="flash-message flash-{{ message_type }}">
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>Categories</h1>
+
+            <p>
+                Create categories to organise your expenses
+                and bills.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="categories-layout">
+
+
+        <!-- Add category -->
+
+        <section class="panel category-form-panel">
+
+            <h2>Add Category</h2>
+
+            <p class="panel-description">
+                Create a new expense category.
+            </p>
+
+
+            <form method="POST"
+                  action="{{ url_for('categories') }}">
+
+                <label for="category_name">
+                    Category name
+                </label>
+
+                <input
+                    id="category_name"
+                    type="text"
+                    name="category_name"
+                    placeholder="e.g. Groceries"
+                    required
+                >
+
+                <button
+                    class="add-button"
+                    type="submit">
+
+                    + Add Category
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Existing categories -->
+
+        <section class="panel">
+
+            <div class="panel-header">
+
+                <h2>Your Categories</h2>
+
+                <span class="category-count">
+                    {{ categories|length }} categories
+                </span>
+
+            </div>
+
+
+            {% if categories %}
+
+                <div class="category-list">
+
+                    {% for category in categories %}
+
+                        <div class="category-item">
+
+                            <div class="category-info">
+
+                                <div class="category-icon">
+                                    £
+                                </div>
+
+                                <span>
+                                    {{ category["name"] }}
+                                </span>
+
+                            </div>
+
+
+                            <div class="category-actions">
+
+                                <a
+                                    href="{{ url_for('edit_category', category_id=category['id']) }}"
+                                    class="edit-button"
+                                >
+                                    Edit
+                                </a>
+
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('delete_category', category_id=category['id']) }}"
+                                >
+
+                                    <button
+                                        type="submit"
+                                        class="delete-button"
+                                        onclick="return confirm('Are you sure you want to delete this category?');"
+                                    >
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+
+            {% else %}
+
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        +
+                    </div>
+
+                    <h3>No categories yet</h3>
+
+                    <p>
+                        Create your first category
+                        to start organising expenses.
+                    </p>
+
+                </div>
+
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>

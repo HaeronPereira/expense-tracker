@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Edit Category | Expense Tracker</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+
+<div class="sidebar">
+
+    <div>
+
+        <h2>💰 Expense Tracker</h2>
+
+        <nav>
+
+            <a href="{{ url_for('home') }}">
+                Dashboard
+            </a>
+
+            <a href="{{ url_for('expenses') }}">
+                Expenses
+            </a>
+
+            <a href="{{ url_for('bills') }}">
+                Bills
+            </a>
+
+            <a
+                class="active"
+                href="{{ url_for('categories') }}"
+            >
+                Categories
+            </a>
+
+            <a href="{{ url_for('reports') }}">
+                Reports
+            </a>
+
+        </nav>
+
+    </div>
+
+    <div class="sidebar-footer">
+        Personal Finance
+    </div>
+
+</div>
+
+
+<main class="main-content">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            <div class="flash-message-container">
+
+                {% for message_type, message in messages %}
+
+                    <div class="flash-message flash-{{ message_type }}">
+
+                        <span>
+                            {{ message }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>Edit Category</h1>
+
+            <p>
+                Update your category name.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <section class="panel expense-form-panel">
+
+        <form method="POST">
+
+            <div class="form-group">
+
+                <label for="category_name">
+                    Category Name
+                </label>
+
+                <input
+                    id="category_name"
+                    name="category_name"
+                    type="text"
+                    value="{{ category['name'] }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for('categories') }}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="add-button"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+
+</html>

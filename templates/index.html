@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Expense Tracker</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+    <div class="sidebar">
+
+        <div>
+            <h2>💰 Expense Tracker</h2>
+
+            <nav>
+                <a class="active" href="{{ url_for('home') }}">Dashboard</a>
+                <a href="{{ url_for('expenses') }}">Expenses</a>
+                <a href="{{ url_for('bills') }}">Bills</a>
+                <a href="{{ url_for('categories') }}">Categories</a>
+                <a href="{{ url_for('reports') }}">Reports</a>
+            </nav>
+        </div>
+
+        <div class="sidebar-footer">
+            Personal Finance
+        </div>
+
+    </div>
+
+
+    <main class="main-content">
+
+        <div class="topbar">
+            <div>
+                <h1>Dashboard</h1>
+                <p>Keep track of your spending and bills.</p>
+            </div>
+
+            <a
+                href="{{ url_for('add_expense') }}"
+                class="add-button"
+            >
+                + Add Expense
+            </a>
+        </div>
+
+
+        <section class="summary-grid">
+
+            <div class="card">
+
+                <p>This Month</p>
+
+                <h2>
+                    £{{ "%.2f"|format(monthly_expenses) }}
+                </h2>
+
+                <span>Total spending this month</span>
+
+            </div>
+
+
+            <div class="card">
+
+                <p>Bills Due</p>
+
+                <h2>
+                    £{{ "%.2f"|format(unpaid_bills) }}
+                </h2>
+
+                <span>Currently outstanding</span>
+
+            </div>
+
+
+            <div class="card">
+
+                <p>Paid Bills</p>
+
+                <h2>
+                    £{{ "%.2f"|format(paid_bills) }}
+                </h2>
+
+                <span>Currently marked as paid</span>
+
+            </div>
+
+
+            <div class="card">
+
+                <p>Categories</p>
+
+                <h2>
+                    {{ category_count }}
+                </h2>
+
+                <span>Expense categories</span>
+
+            </div>
+
+        </section>
+
+
+        <section class="dashboard-grid">
+
+            <div class="panel">
+
+                <div class="panel-header">
+
+                    <h2>Recent Expenses</h2>
+
+                    <a href="{{ url_for('expenses') }}">
+                        View all
+                    </a>
+
+                </div>
+
+
+                {% if recent_expenses %}
+
+                <div class="expense-table-container">
+
+                    <table class="expense-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for expense in recent_expenses %}
+
+                            <tr>
+
+                                <td>
+                                    {{ expense["expense_date"] }}
+                                </td>
+
+                                <td>
+                                    {{ expense["description"] }}
+                                </td>
+
+                                <td>
+                                    {{ expense["category_name"] }}
+                                </td>
+
+                                <td class="expense-amount">
+                                    £{{ "%.2f"|format(expense["amount"]) }}
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                {% else %}
+
+                <div class="empty-state">
+
+                    <div class="empty-icon">
+                        £
+                    </div>
+
+                    <h3>No expenses yet</h3>
+
+                    <p>
+                        Add your first expense to start tracking
+                        your spending.
+                    </p>
+
+                    <a
+                        href="{{ url_for('add_expense') }}"
+                        class="add-button"
+                    >
+                        + Add Expense
+                    </a>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="panel">
+
+                <h2>Spending by Category</h2>
+
+                {% if category_spending %}
+
+                    <div class="category-spending-list">
+
+                        {% for category in category_spending %}
+
+                            <div class="category-spending-item">
+
+                                <div class="category-spending-name">
+
+                                    <span>
+                                        {{ category["category_name"] }}
+                                    </span>
+
+                                    <strong>
+                                        £{{ "%.2f"|format(category["total_amount"]) }}
+                                    </strong>
+
+                                </div>
+
+                                {% if monthly_expenses > 0 %}
+
+                                    <div class="spending-bar-background">
+
+                                        <div
+                                            class="spending-bar"
+                                            style="width: {{ (category['total_amount'] / monthly_expenses * 100)|round(1) }}%;"
+                                        >
+                                        </div>
+
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <div class="empty-icon">
+                            £
+                        </div>
+
+                        <h3>No spending this month</h3>
+
+                        <p>
+                            Add an expense for this month to see
+                            your category breakdown.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

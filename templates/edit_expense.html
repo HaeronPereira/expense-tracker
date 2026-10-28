@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Edit Expense | Expense Tracker</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+    <div>
+
+        <h2>💰 Expense Tracker</h2>
+
+        <nav>
+
+            <a href="{{ url_for('home') }}">
+                Dashboard
+            </a>
+
+            <a
+                class="active"
+                href="{{ url_for('expenses') }}"
+            >
+                Expenses
+            </a>
+
+            <a href="{{ url_for('bills') }}">Bills</a>
+
+            <a href="{{ url_for('categories') }}">
+                Categories
+            </a>
+
+            <a href="{{ url_for('reports') }}">Reports</a>
+
+        </nav>
+
+    </div>
+
+    <div class="sidebar-footer">
+        Personal Finance
+    </div>
+
+</div>
+
+
+<main class="main-content">
+
+    <div class="topbar">
+
+        <div>
+
+            <h1>Edit Expense</h1>
+
+            <p>
+                Update your expense details.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <section class="panel expense-form-panel">
+
+        <form method="POST">
+
+
+            <div class="form-group">
+
+                <label for="description">
+                    Description
+                </label>
+
+                <input
+                    id="description"
+                    name="description"
+                    type="text"
+                    value="{{ expense['description'] }}"
+                    required
+                >
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="amount">
+                        Amount (£)
+                    </label>
+
+                    <input
+                        id="amount"
+                        name="amount"
+                        type="number"
+                        min="0.01"
+                        step="0.01"
+                        value="{{ expense['amount'] }}"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="expense_date">
+                        Date
+                    </label>
+
+                    <input
+                        id="expense_date"
+                        name="expense_date"
+                        type="date"
+                        value="{{ expense['expense_date'] }}"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="category_id">
+                        Category
+                    </label>
+
+                    <select
+                        id="category_id"
+                        name="category_id"
+                        required
+                    >
+
+                        {% for category in categories %}
+
+                            <option
+                                value="{{ category['id'] }}"
+                                {% if category['id'] == expense['category_id'] %}
+                                selected
+                                {% endif %}
+                            >
+                                {{ category['name'] }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="payment_method">
+                        Payment Method
+                    </label>
+
+                    <select
+                        id="payment_method"
+                        name="payment_method"
+                        required
+                    >
+
+                        <option
+                            value="Debit Card"
+                            {% if expense['payment_method'] == 'Debit Card' %}selected{% endif %}
+                        >
+                            Debit Card
+                        </option>
+
+                        <option
+                            value="Credit Card"
+                            {% if expense['payment_method'] == 'Credit Card' %}selected{% endif %}
+                        >
+                            Credit Card
+                        </option>
+
+                        <option
+                            value="Cash"
+                            {% if expense['payment_method'] == 'Cash' %}selected{% endif %}
+                        >
+                            Cash
+                        </option>
+
+                        <option
+                            value="Bank Transfer"
+                            {% if expense['payment_method'] == 'Bank Transfer' %}selected{% endif %}
+                        >
+                            Bank Transfer
+                        </option>
+
+                        <option
+                            value="Direct Debit"
+                            {% if expense['payment_method'] == 'Direct Debit' %}selected{% endif %}
+                        >
+                            Direct Debit
+                        </option>
+
+                        <option
+                            value="Other"
+                            {% if expense['payment_method'] == 'Other' %}selected{% endif %}
+                        >
+                            Other
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="notes">
+                    Notes
+                </label>
+
+                <textarea
+                    id="notes"
+                    name="notes"
+                    rows="4"
+                >{{ expense['notes'] or '' }}</textarea>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a
+                    href="{{ url_for('expenses') }}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="add-button"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+
+</html>
